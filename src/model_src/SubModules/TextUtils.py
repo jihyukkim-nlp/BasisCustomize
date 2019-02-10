@@ -34,24 +34,3 @@ def text_padding(text, length, padding_idx, eos_idx=None, sos_idx=None):
 			padded_sentences[i][st:st+l] = x
 		
 	return padded_sentences
-
-def packed_loss(predict, target, length, criterion):
-	# sort
-	sort_idx = torch.sort(-length)[1]
-	predict = predict[sort_idx]
-	target = target[sort_idx]
-	length = length[sort_idx]
-
-	target = pack(target, length, batch_first=True)[0]
-	predict = pack(predict, length, batch_first=True)[0]
-	loss = criterion(predict, target)
-	return loss
-
-def masked_softmax(logits, mask, dim=1, epsilon=1e-5):
-	""" logits, mask has same size """
-	masked_logits = logits.masked_fill(mask == 0, -1e9)
-	max_logits = torch.max(masked_logits, dim=dim, keepdim=True)[0]
-	exps = torch.exp(masked_logits-max_logits)
-	masked_exps = exps * mask.float()
-	masked_sums = masked_exps.sum(dim, keepdim=True)
-	return masked_exps/masked_sums
