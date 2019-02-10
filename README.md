@@ -17,6 +17,8 @@ Jihyeok Kim*, Reinald Kim Amplayo*, Kyungjae Lee, Sua Sung, Minji Seo, and Seung
 
 We provided a shell script `dataset/yelp2013/download_yelp.sh` that downloads and preprocess the Yelp 2013 dataset. Preprocessing can be similarly done with other datasets as well (see below for download links).
 
+We also provided the vocabulary and word vectors used in our experiments (in the `predefined_vocab/yelp2013` directory) to better replicate the results reported in the paper.
+
 #### 2. Train and Test the Models
 
 The `src/main.py` trains the model using the given training and dev sets, and subsequently tests the model on the given test set. There are multiple arguments that need to be set, but the most important (and mandatory) ones are the following:
@@ -88,4 +90,4 @@ AAPR
 }
 ```
 
-If there are any questions, please send me an email: zizi1532 at yonsei dot ac dot kr
+If there are any questions, please send Jihyeok Kim an email: zizi1532 at yonsei dot ac dot kr
