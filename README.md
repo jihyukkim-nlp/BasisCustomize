@@ -4,7 +4,7 @@ Categorical Metadata Representation for Customized Text Classification
 This PyTorch code was used in the experiments of the research paper
 
 Jihyeok Kim*, Reinald Kim Amplayo*, Kyungjae Lee, Sua Sung, Minji Seo, and Seung-won Hwang. **Categorical-Metadata-Representation-for-Customized-Text-Classification**. _TACL_, 2019.
-(* Authors have equal contributions)
+(* equal contribution)
 
 ### Run the Code!
 
