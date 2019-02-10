@@ -77,9 +77,6 @@ $ ./run.sh
 |pretrained_word_em_dir| directory of pretrained word vector| each pretrained word vectors is in ../predefined_vocab/{domain}/|
 |max_grad_norm| for gradient cliping| 3.0|
 
- 
-
-TODO by Jihyeok
 
 ### Download the Datasets!
 
