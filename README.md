@@ -25,7 +25,7 @@ The `src/main.py` trains the model using the given training and dev sets, and su
 - `domain`: the dataset directory name (e.g. yelp2013)
 - `num_bases`: the number of bases (only required when basis customization is used)
 
-An example execution can is:
+An example execution is:
 
 ~~~bash
 python3 -W ignore main.py \
