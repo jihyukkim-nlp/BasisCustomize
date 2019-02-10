@@ -1,5 +1,5 @@
 #!/bin/bash
-apt-get install p7zip
+sudo apt-get install p7zip
 fileid="1uETI9hoZxbGchmB7D_o6WJaEfZLwx1nc"
 filename="dataset.7z"
 curl -c ./cookie -s -L "https://drive.google.com/uc?export=download&id=${fileid}" > /dev/null
