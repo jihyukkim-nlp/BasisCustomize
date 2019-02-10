@@ -8,6 +8,8 @@ Jihyeok Kim*, Reinald Kim Amplayo*, Kyungjae Lee, Sua Sung, Minji Seo, and Seung
 
 ### Run the Code!
 
+TODO by Jihyeok
+
 ### Download the Datasets!
 
 There are three datasets used in the paper: Yelp 2013, AAPR, and PolMed.
