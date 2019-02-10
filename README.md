@@ -10,8 +10,8 @@ Jihyeok Kim*, Reinald Kim Amplayo*, Kyungjae Lee, Sua Sung, Minji Seo, and Seung
 
 #### Prerequisite
 
-1) PyTorch 1.0
-2) Other requirements are listed in `requirements.txt`.
+- PyTorch 1.0
+- Other requirements are listed in `requirements.txt`.
 
 #### 1. Preprocess Dataset
 
