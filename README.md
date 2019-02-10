@@ -1,48 +1,33 @@
 # BasisCustomize
 Categorical Metadata Representation for Customized Text Classification
 
-This Pytorch code was used in the experiments of the research paper
+This PyTorch code was used in the experiments of the research paper
 
 Jihyeok Kim*, Reinald Kim Amplayo*, Kyungjae Lee, Sua Sung, Minji Seo, and Seung-won Hwang. **Categorical-Metadata-Representation-for-Customized-Text-Classification**. _TACL_, 2019.
 (* Authors have equal contributions)
 
 ### Run the Code!
-#### Clone github code
-~~~bash
-$ git clone "https://github.com/zizi1532/BasisCustomize.git"
-~~~
+
 #### Prerequisite
-(Experiment has been done in python 3.5, Linux 16.04 LTS, cuda 8.0, Geforce GTX 1080Ti)
-1) Make virtual environment
-~~~bash
-$ virtualenv basis_customize --python=python3.5
-$ source basis_customize/bin/activate
-~~~
-2) Install pytorch (Stable 1.0)  - follow instruction in https://pytorch.org/
-3) Install required python packages
-~~~bash
-$ cd BasisCustomize
-$ pip install -r requirements.txt # required python packages
-$ apt-get install p7zip # required for unzip yelp2013 dataset
-~~~
 
-#### 1. DownLoad & Preprocess Dataset
-1) Yelp2013
-~~~bash
-$ cd dataset/yelp2013
-$ ./download_yelp.sh
-~~~
-2) AAPR
-3) Polmed
+1) PyTorch 1.0
+2) Other requirements are listed in `requirements.txt`.
 
-#### 2. Train
+#### 1. Preprocess Dataset
+
+We provided a shell script `dataset/yelp2013/download_yelp.sh` that downloads and preprocess the Yelp 2013 dataset. Preprocessing can be similarly done with other datasets as well (see below for download links).
+
+#### 2. Train and Test the Models
+
+The `src/main.py` trains the model using the given training and dev sets, and subsequently tests the model on the given test set. There are multiple arguments that need to be set, but the most important (and mandatory) ones are the following:
+
+- `model_type`: the type and method of customization, which can be assigned as either `BiLSTM` (no customization), or `<location>[_basis]_cust`, where `<location>` can be any of the following: word, encoder, attention, linear, bias.
+- `domain`: the dataset directory name (e.g. yelp2013)
+- `num_bases`: the number of bases (only required when basis customization is used)
+
+An example execution can is:
+
 ~~~bash
-$ cd src
-$ python main.py {arguments}
-~~~
-For example
-~~~bash
-$ cat run.sh
 python3 -W ignore main.py \
 --model_type linear_basis_cust \
 --num_bases 3 \
@@ -55,28 +40,7 @@ python3 -W ignore main.py \
 --word_dim 300 \
 --state_size 256 \
 --valid_step 1000 \
-$ ./run.sh
 ~~~
-#### Arguments
-
-|arg|	description|	default|
-|---|---|---|
-|model_type|	model type: BiLSTM, word_cust, attention_cust, linear_cust, bias_cust, word_basis_cust, encoder_basis_cust, attention_basis_cust, linear_basis_cust, bias_basis_cust	|mandatory|
-|domain|	dataset: yelp2013, aapr, polmed	|mandatory|
-|num_bases| number of bases (required for basis model type)| mandatory if model using basis customize else 0|
-|vocab_dir| directory of vocabulary; each predefined vocabulary is in ../predefined_vocab/{domain}/|
-|train_datadir| directory of train data; in ../dataset/{domain}/train.txt|default path; yelp2013 train.txt|
-|dev_datadir| directory of development data; in ../dataset/{domain}/dev.txt|default path; yelp2013 dev.txt|
-|test_datadir| directory of test data; in ../dataset/{domain}/test.txt|default path; yelp2013 test.txt|
-|word_dim| word vector dimension|300|
-|meta_dim| latent vector dimension of meta unit|128|
-|valid_step| evaluate with development set every {valid_step} iteration|1000|
-|batch_size| - |32|
-|epoch| maximum number of epoch| 10|
-|device| cpu or cuda (specify index if you have multiple gpu, e.g. cuda:0 or cuda:1,.)|cuda|
-|pretrained_word_em_dir| directory of pretrained word vector| each pretrained word vectors is in ../predefined_vocab/{domain}/|
-|max_grad_norm| for gradient cliping| 3.0|
-
 
 ### Download the Datasets!
 
@@ -123,3 +87,5 @@ AAPR
 	Title = {Automatic Academic Paper Rating Based on Modularized Hierarchical Convolutional Neural Network},
 }
 ```
+
+If there are any questions, please send me an email: zizi1532 at yonsei dot ac dot kr
