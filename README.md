@@ -57,7 +57,7 @@ python3 -W ignore main.py \
 --valid_step 1000 \
 $ ./run.sh
 ~~~
-##### Arguments
+#### Arguments
 
 |arg|	description|	default|
 |---|---|---|
