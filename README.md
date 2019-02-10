@@ -7,6 +7,54 @@ Jihyeok Kim*, Reinald Kim Amplayo*, Kyungjae Lee, Sua Sung, Minji Seo, and Seung
 (* Authors have equal contributions)
 
 ### Run the Code!
+#### Clone github code
+~~~bash
+$ git clone "https://github.com/zizi1532/BasisCustomize.git"
+~~~
+#### Prerequisite
+(Experiment has been done in python 3.5, Linux 16.04 LTS, cuda 8.0, Geforce GTX 1080Ti)
+> Install pytorch (Stable 1.0) following instruction in https://pytorch.org/
+~~~bash
+$ cd BasisCustomize
+$ pip install -r requirements.txt # required python packages
+$ apt-get install p7zip # required for unzip yelp2013 dataset
+~~~
+
+
+
+#### 1. DownLoad Dataset
+1) Yelp2013
+~~~bash
+$ cd dataset/yelp2013
+$ ./download_yelp.sh
+~~~
+2) AAPR
+3) Polmed
+
+#### 2. Train
+~~~bash
+$ cd src
+$ python main.py {arguments}
+~~~
+For example
+~~~bash
+$ cat run.sh
+python3 -W ignore main.py \
+--model_type linear_basis_cust \
+--num_bases 3 \
+--domain yelp2013 \
+--vocab_dir ../predefined_vocab/yelp2013/42939.vocab \
+--pretrained_word_em_dir ../predefined_vocab/yelp2013/word_vectors.npy \
+--train_datadir ../dataset/yelp2013/processed_data/train.txt \
+--dev_datadir ../dataset/yelp2013/processed_data/dev.txt \
+--test_datadir ../dataset/yelp2013/processed_data/test.txt \
+--word_dim 300 \
+--state_size 256 \
+--valid_step 1000 \
+$ ./run.sh
+~~~
+
+
 
 TODO by Jihyeok
 
