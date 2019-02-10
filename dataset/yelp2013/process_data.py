@@ -4,7 +4,7 @@ from tqdm import tqdm
 if not os.path.exists("./processed_data"):
 	os.mkdir("./processed_data")
 with open('../../predefined_vocab/yelp2013/42939.vocab', "r") as f:
-    vocab = f.read().split("\n")
+	vocab = f.read().split("\n")
 word2idx = {w:i for i,w in enumerate(vocab)}
 
 with open('./yelp-2013-seg-20-20.train.ss') as f:
