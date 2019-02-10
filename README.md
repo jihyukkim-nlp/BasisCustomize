@@ -13,16 +13,20 @@ $ git clone "https://github.com/zizi1532/BasisCustomize.git"
 ~~~
 #### Prerequisite
 (Experiment has been done in python 3.5, Linux 16.04 LTS, cuda 8.0, Geforce GTX 1080Ti)
-> Install pytorch (Stable 1.0) following instruction in https://pytorch.org/
+1) Make virtual environment
+~~~bash
+$ virtualenv basis_customize --python=python3.5
+$ source basis_customize/bin/activate
+~~~
+2) Install pytorch (Stable 1.0)  - follow instruction in https://pytorch.org/
+3) Install required python packages
 ~~~bash
 $ cd BasisCustomize
 $ pip install -r requirements.txt # required python packages
 $ apt-get install p7zip # required for unzip yelp2013 dataset
 ~~~
 
-
-
-#### 1. DownLoad Dataset
+#### 1. DownLoad & Preprocess Dataset
 1) Yelp2013
 ~~~bash
 $ cd dataset/yelp2013
@@ -53,6 +57,7 @@ python3 -W ignore main.py \
 --valid_step 1000 \
 $ ./run.sh
 ~~~
+
 
 
 
