@@ -57,9 +57,27 @@ python3 -W ignore main.py \
 --valid_step 1000 \
 $ ./run.sh
 ~~~
+##### Arguments
 
+|arg|	description|	default|
+|---|---|---|
+|model_type|	model type: BiLSTM, word_cust, attention_cust, linear_cust, bias_cust, word_basis_cust, encoder_basis_cust, attention_basis_cust, linear_basis_cust, bias_basis_cust	|mandatory|
+|domain|	dataset: yelp2013, aapr, polmed	|mandatory|
+|num_bases| number of bases (required for basis model type)| mandatory if model using basis customize else 0|
+|vocab_dir| directory of vocabulary; each predefined vocabulary is in ../predefined_vocab/{domain}/|
+|train_datadir| directory of train data; in ../dataset/{domain}/train.txt|default path; yelp2013 train.txt|
+|dev_datadir| directory of development data; in ../dataset/{domain}/dev.txt|default path; yelp2013 dev.txt|
+|test_datadir| directory of test data; in ../dataset/{domain}/test.txt|default path; yelp2013 test.txt|
+|word_dim| word vector dimension|300|
+|meta_dim| latent vector dimension of meta unit|128|
+|valid_step| evaluate with development set every {valid_step} iteration|1000|
+|batch_size| - |32|
+|epoch| maximum number of epoch| 10|
+|device| cpu or cuda (specify index if you have multiple gpu, e.g. cuda:0 or cuda:1,.)|cuda|
+|pretrained_word_em_dir| directory of pretrained word vector| each pretrained word vectors is in ../predefined_vocab/{domain}/|
+|max_grad_norm| for gradient cliping| 3.0|
 
-
+ 
 
 TODO by Jihyeok
 
