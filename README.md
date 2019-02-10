@@ -6,6 +6,19 @@ This Pytorch code was used in the experiments of the research paper
 Jihyeok Kim*, Reinald Kim Amplayo*, Kyungjae Lee, Sua Sung, Minji Seo, and Seung-won Hwang. **Categorical-Metadata-Representation-for-Customized-Text-Classification**. _TACL_, 2019.
 (* Authors have equal contributions)
 
+### Run the Code!
+
+### Download the Datasets!
+
+There are three datasets used in the paper: Yelp 2013, AAPR, and PolMed.
+
+To download Yelp 2013, refer to the following <a href="https://drive.google.com/open?id=1PxAkmPLFMnfom46FMMXkHeqIxDbA16oy">link</a> from the original authors.
+
+Although they were constructed by different authors (please refer to these links for <a href="https://github.com/lancopku/AAPR">AAPR</a> and <a href="https://www.figure-eight.com/">PolMed</a>, we use specific data splits for the AAPR and PolMed datasets.
+Download our splits <a href="https://github.com/zizi1532/BasisCustomize/releases/download/1.0/datasets.zip">here</a>.
+
+### Cite the Paper!
+
 To cite the paper/code/data splits, please use this BibTex:
 
 ```
