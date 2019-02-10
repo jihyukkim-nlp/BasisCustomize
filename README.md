@@ -9,7 +9,7 @@ Jihyeok Kim*, Reinald Kim Amplayo*, Kyungjae Lee, Sua Sung, Minji Seo, and Seung
 ### Run the Code!
 
 #### Prerequisite
-
+- ```$ sudo apt-get install p7zip```
 - PyTorch 1.0
 - Other requirements are listed in `requirements.txt`.
 
