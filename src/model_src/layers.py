@@ -39,9 +39,11 @@ class BasisCustWordEmb(nn.Module):
             setattr(self, name, nn.Embedding(num_meta, args.meta_dim))
             meta_param_manager.register("BasisCustWordEmb."+name, getattr(self, name).weight)
         self.P = nn.Sequential(
-            nn.Linear(args.meta_dim*len(args.meta_units), args.num_bases, bias=False),
+            nn.Linear(args.meta_dim*len(args.meta_units), args.key_query_size), # From MetaData to Query 
+            nn.Tanh(),
+            nn.Linear(args.key_query_size, args.num_bases, bias=False), # Calculate Weights of each Basis: Key & Query Inner-product
             nn.Softmax(dim=1),
-            nn.Linear(args.num_bases, args.word_dim*args.word_dim)
+            nn.Linear(args.num_bases, args.word_dim*args.word_dim), # Weighted Sum of Bases
             )
     def forward(self, review, **kwargs):
         x = self.word_em(review)
@@ -82,7 +84,9 @@ class BasisCustBiLSTM(nn.Module):
         self.weight_hh_l0_reverse = nn.Parameter(torch.zeros(args.num_bases, args.state_size*2, args.state_size//2))
         self.bias_l0_reverse = nn.Parameter(torch.zeros(args.num_bases, args.state_size*2))
         self.P = nn.Sequential(
-            nn.Linear(args.meta_dim*len(args.meta_units), args.num_bases, bias=False),
+            nn.Linear(args.meta_dim*len(args.meta_units), args.key_query_size), # From MetaData to Query 
+            nn.Tanh(),
+            nn.Linear(args.key_query_size, args.num_bases, bias=False), # Calculate Weights of each Basis: Key & Query Inner-product
             nn.Softmax(dim=1),
             )
     def forward(self, x, length, **kwargs):
@@ -231,9 +235,11 @@ class BasisCustAttention(nn.Module):
             setattr(self, name, nn.Embedding(num_meta, args.meta_dim))
             meta_param_manager.register("BasisCustAttention."+name, getattr(self, name).weight)
         self.P = nn.Sequential(
-            nn.Linear(args.meta_dim*len(args.meta_units), args.num_bases, bias=False),
+            nn.Linear(args.meta_dim*len(args.meta_units), args.key_query_size), # From MetaData to Query 
+            nn.Tanh(),
+            nn.Linear(args.key_query_size, args.num_bases, bias=False), # Calculate Weights of each Basis: Key & Query Inner-product
             nn.Softmax(dim=1),
-            nn.Linear(args.num_bases, args.state_size)
+            nn.Linear(args.num_bases, args.state_size), # Weighted Sum of Bases
             )
         self.attention = LinearAttentionWithQuery(encoder_dim=args.state_size, query_dim=args.state_size)
     def forward(self, x, mask, **kwargs):
@@ -276,9 +282,11 @@ class BasisCustLinear(nn.Module):
             setattr(self, name, nn.Embedding(num_meta, args.meta_dim))
             meta_param_manager.register("BasisCustLinear."+name, getattr(self, name).weight)
         self.P = nn.Sequential(
-            nn.Linear(args.meta_dim*len(args.meta_units), args.num_bases, bias=False),
+            nn.Linear(args.meta_dim*len(args.meta_units), args.key_query_size), # From MetaData to Query 
+            nn.Tanh(),
+            nn.Linear(args.key_query_size, args.num_bases, bias=False), # Calculate Weights of each Basis: Key & Query Inner-product
             nn.Softmax(dim=1),
-            nn.Linear(args.num_bases, args.state_size*args.num_label)
+            nn.Linear(args.num_bases, args.state_size*args.num_label), # Weighted Sum of Bases
             )
     def forward(self, x, **kwargs):
         W = self.P(
@@ -312,9 +320,11 @@ class BasisCustBias(nn.Module):
             setattr(self, name, nn.Embedding(num_meta, args.meta_dim))
             meta_param_manager.register("BasisCustBias."+name, getattr(self, name).weight)
         self.P = nn.Sequential(
-            nn.Linear(args.meta_dim*len(args.meta_units), args.num_bases, bias=False),
+            nn.Linear(args.meta_dim*len(args.meta_units), args.key_query_size), # From MetaData to Query 
+            nn.Tanh(),
+            nn.Linear(args.key_query_size, args.num_bases, bias=False), # Calculate Weights of each Basis: Key & Query Inner-product
             nn.Softmax(dim=1),
-            nn.Linear(args.num_bases, args.state_size)
+            nn.Linear(args.num_bases, args.state_size), # Weighted Sum of Bases
             )
         self.Y = nn.Linear(args.state_size, args.num_label, bias=False)
     def forward(self, **kwargs):
