@@ -31,7 +31,7 @@ baseline_models = ['BiLSTM']
 cust_models = ['word_cust', 'encoder_cust', 'attention_cust', 'linear_cust', 'bias_cust']
 basis_cust_models = ['word_basis_cust', 'encoder_basis_cust', 'attention_basis_cust', 'linear_basis_cust', 'bias_basis_cust']
 model_choices = baseline_models + cust_models + basis_cust_models
-parser.add_argument("--random_seed", type=int, default=1234)
+parser.add_argument("--random_seed", type=int, default=33)
 parser.add_argument("--model_type", choices=model_choices, help="Give model type.")
 parser.add_argument("--domain", type=str, choices=['yelp2013', 'polmed', 'aapr'], default="yelp2013")
 parser.add_argument("--num_bases", type=int, default=0)
@@ -245,5 +245,10 @@ VALIDATION RMSE     : {:2.4f}""".format(
 		return
 
 classifier = modelClassifier()
-classifier.train()
+try:
+	classifier.train()
+except KeyboardInterrupt:
+	print("KeyboardInterrupt occurs")
+	print("Start Test Evaluation")
+
 classifier.test()
