@@ -93,5 +93,5 @@ AAPR
 }
 ```
 
-If there are any questions, please send Jihyeok Kim an email: [zizi1532@yonsei.ac.kr]
+If there are any questions, please send Jihyeok Kim an email: zizi1532@yonsei.ac.kr
 
