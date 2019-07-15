@@ -1,5 +1,5 @@
 # utility packages
-import argparse, os, numpy as np, pickle
+import argparse, os, numpy as np, pickle, random
 import logging, colorlog
 from tqdm import tqdm
 
@@ -31,36 +31,43 @@ baseline_models = ['BiLSTM']
 cust_models = ['word_cust', 'encoder_cust', 'attention_cust', 'linear_cust', 'bias_cust']
 basis_cust_models = ['word_basis_cust', 'encoder_basis_cust', 'attention_basis_cust', 'linear_basis_cust', 'bias_basis_cust']
 model_choices = baseline_models + cust_models + basis_cust_models
+parser.add_argument("--random_seed", type=int, default=1234)
 parser.add_argument("--model_type", choices=model_choices, help="Give model type.")
 parser.add_argument("--domain", type=str, choices=['yelp2013', 'polmed', 'aapr'], default="yelp2013")
-parser.add_argument("--num_bases", type=int, default=0, help="number of bases for (required for basis_cust model)")
-parser.add_argument("--vocab_dir", type=str, default="../predefined_vocab/yelp2013/42939.vocab")
-parser.add_argument("--train_datadir", type=str, default="../dataset/yelp2013/processed_data/train.txt")
-parser.add_argument("--dev_datadir", type=str, default="../dataset/yelp2013/processed_data/dev.txt")
-parser.add_argument("--test_datadir", type=str, default="../dataset/yelp2013/processed_data/test.txt")
+parser.add_argument("--num_bases", type=int, default=0)
+parser.add_argument("--vocab_dir", type=str)
+parser.add_argument("--train_datadir", type=str, default="./processed_data/flat_data.p")
+parser.add_argument("--dev_datadir", type=str, default="./processed_data/flat_data.p")
+parser.add_argument("--test_datadir", type=str, default="./processed_data/flat_data.p")
 parser.add_argument("--word_dim", type=int, default=300, help="word vector dimension")
-parser.add_argument("--meta_dim", type=int, default=128, help="meta embedding latent vector dimension")
 parser.add_argument("--state_size", type=int, default=256, help="BiLSTM hidden dimension")
+parser.add_argument("--meta_dim", type=int, default=64, help="meta embedding latent vector dimension")
+parser.add_argument("--key_query_size", type=int, default=64, help="key and query dimension for meta context")
 parser.add_argument("--batch_size", type=int, default=32)
-parser.add_argument("--valid_step", type=int, default=1000, help="evaluate with development set every [valid_step] iteration")
-parser.add_argument("--epoch", type=int, default=10, help="maximum number of epochs")
-parser.add_argument("--device", type=str, default="cuda", help="cpu or cuda (specify index if you have multiple gpu, e.g. cuda:0 or cuda:1,.)")
-parser.add_argument("--pretrained_word_em_dir", type=str, default="../predefined_vocab/yelp2013/word_vectors.npy")
-parser.add_argument("--max_grad_norm", type=float, default=3.0, help="for gradient cliping")
+parser.add_argument("--valid_step", type=int, default=1000, help="evaluation step using dev set")
+parser.add_argument("--epoch", type=int, default=10)
+parser.add_argument("--device", type=str, default="cuda")
+parser.add_argument("--pretrained_word_em_dir", type=str, default="")
+parser.add_argument("--max_grad_norm", type=float, default=3.0)
 
 args = parser.parse_args()
-if 'basis' in args.model_type and args.num_bases==0:
-	print(" must input number of bases (\"--num_bases\") for basis_cust model type")
-	print(" e.g. python main.py word_basis_cust --num_bases 3")
-	exit()
+if 'basis' in args.model_type:
+	if args.num_bases==0:
+		print(" must input number of bases (\"--num_bases\") for basis_cust model type")
+		print(" e.g. python main.py word_basis_cust --num_bases 3")
+		exit()
+# Manual Random Seed
+random.seed(args.random_seed)
+np.random.seed(args.random_seed)
+torch.manual_seed(args.random_seed)
+torch.cuda.manual_seed(args.random_seed)
+torch.backends.cudnn.deterministic=True
 
 class modelClassifier:
 	def __init__(self):
 
 		# Ignite engine
 		self.engine = None
-		self.best_dev_acc = None
-		self.dev_rmse = None
 		self._engine_ready()
 
 		# Dataloader
@@ -75,7 +82,12 @@ class modelClassifier:
 
 		# MODEL DECLARATION
 		self.model = Classifier(args).to(args.device)
-		
+		print("<< Model Configuration >>")
+		print(self.model)
+		print("*"*50)
+		with open("./ModelDescription.txt", "w") as f:
+			f.write(repr(self.model))
+
 		# OPTIMIZER DECLARATION
 		parameters = filter(lambda p: p.requires_grad, self.model.parameters())
 		self.optimizer = torch.optim.Adadelta(parameters, lr=1.0, rho=0.9, eps=1e-6)
@@ -97,7 +109,7 @@ class modelClassifier:
 			self.param_dir += '.pth'
 
 	def _init_param(self, model):
-		colorlog.info("[Init General Parameter] >> xavier_uniform_")
+		colorlog.critical("[Init General Parameter] >> xavier_uniform_")
 		for p in model.parameters():
 			if p.requires_grad:
 				if len(p.shape)>1:
@@ -105,12 +117,12 @@ class modelClassifier:
 				else:
 					nn.init.constant_(p, 0)
 		if args.pretrained_word_em_dir:
-			colorlog.info("[Pretrained Word em loaded] from {}".format(args.pretrained_word_em_dir))
+			colorlog.critical("[Pretrained Word em loaded] from {}".format(args.pretrained_word_em_dir))
 			word_em = np.load(args.pretrained_word_em_dir)
 			model.word_em_weight.data.copy_(torch.from_numpy(word_em))
 	
 	def _init_meta_param(self, model):
-		colorlog.info("[Init Meta Parameter] >> uniform_ [-0.01, 0.01]")
+		colorlog.critical("[Init Meta Parameter] >> uniform_ [-0.01, 0.01]")
 		for name, param in model.meta_param_manager.state_dict().items():
 			colorlog.info("{} intialized".format(name))
 			nn.init.uniform_(param, -0.01, 0.01)
@@ -179,8 +191,7 @@ VALIDATION RMSE     : {:2.4f}""".format(
 		colorlog.info('>' * 50)
 		colorlog.info('EPOCH: {}'.format(self.engine.state.epoch))
 	def _epoch_completed(self, engine):
-		self.best_dev_acc = self.engine.state.best_dev_acc
-		self.dev_rmse = self.engine.state.dev_rmse
+		pass
 
 	def evaluation(self, dataloader):
 		colorlog.info("	EVALUATION ... ")
@@ -188,18 +199,21 @@ VALIDATION RMSE     : {:2.4f}""".format(
 		num_data = len(dataloader.dataset)
 		predicted_label = np.empty(num_data).astype(np.int64)
 		target_label = np.empty(num_data).astype(np.int64)
-		batch_size = dataloader.batch_size
-		for i_batch, sample_batch in enumerate(dataloader):
-			target_batch, kwinputs = sample_batch
-			predict_batch = self.model(**kwinputs)
+		self.model.eval()
+		with torch.no_grad():
+			batch_size = dataloader.batch_size
+			for i_batch, sample_batch in enumerate(dataloader):
+				target_batch, kwinputs = sample_batch
+				predict_batch = self.model(**kwinputs)
+				
+				# ACCURACY, RMSE
+				_, predict_batch = torch.max(predict_batch, dim=1)
+				predicted_label[i_batch*batch_size:(i_batch+1)*batch_size] = predict_batch.cpu().data.numpy()
+				target_label[i_batch*batch_size:(i_batch+1)*batch_size] = target_batch.cpu().data.numpy()
 			
-			# ACCURACY, RMSE
-			_, predict_batch = torch.max(predict_batch, dim=1)
-			predicted_label[i_batch*batch_size:(i_batch+1)*batch_size] = predict_batch.cpu().data.numpy()
-			target_label[i_batch*batch_size:(i_batch+1)*batch_size] = target_batch.cpu().data.numpy()
-		
-		acc = (predicted_label==target_label).mean()
-		rmse = ((predicted_label-target_label)**2).mean()**0.5
+			acc = (predicted_label==target_label).mean()
+			rmse = ((predicted_label-target_label)**2).mean()**0.5
+		self.model.train()
 		return acc, rmse
 
 	def train(self):
